@@ -1,7 +1,16 @@
-function autoBind(_originalMethod: Function, context: DecoratorContext) {
-    context.addInitializer(function (this: any) {
-        this[context.name as string] = this[context.name as string].bind(this);
-    });
+function autoBind(_target: any, _methodName: string, descriptor: PropertyDescriptor) {
+    const originalMethod = descriptor.value;
+
+    const adjDescriptor: PropertyDescriptor = {
+        configurable: true,
+        get() {
+            const boundFn = originalMethod.bind(this);
+
+            return boundFn;
+        }
+    }
+
+    return adjDescriptor;
 }
 
 class ProjectInput {
