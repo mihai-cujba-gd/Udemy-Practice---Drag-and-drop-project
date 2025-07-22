@@ -1,3 +1,9 @@
+function autoBind(_originalMethod: Function, context: DecoratorContext) {
+    context.addInitializer(function (this: any) {
+        this[context.name as string] = this[context.name as string].bind(this);
+    });
+}
+
 class ProjectInput {
     templateElement: HTMLTemplateElement;
     hostElement: HTMLDivElement;
@@ -9,19 +15,20 @@ class ProjectInput {
     constructor() {
         this.templateElement = document.getElementById("project-input")! as HTMLTemplateElement;
         this.hostElement = document.getElementById("app")! as HTMLDivElement;
-    
+
         const importedNode = document.importNode(this.templateElement.content, true);
-        this.element = importedNode.firstElementChild as HTMLFormElement; 
+        this.element = importedNode.firstElementChild as HTMLFormElement;
         this.element.id = "user-input"
-        
+
         this.titleInputElement = this.element.querySelector("#title")!;
         this.descriptionInputElement = this.element.querySelector("#description")!;
         this.peopleInputElement = this.element.querySelector("#people")!;
-        
+
         this.configure();
         this.attach();
     }
 
+    @autoBind
     private submitHandler(event: Event) {
         event.preventDefault();
 
@@ -29,7 +36,7 @@ class ProjectInput {
     }
 
     private configure() {
-        this.element.addEventListener("submit", this.submitHandler.bind(this))
+        this.element.addEventListener("submit", this.submitHandler)
     }
 
     private attach() {
