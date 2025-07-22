@@ -1,3 +1,40 @@
+interface Validatable {
+    value?: string | number;
+    required?: boolean;
+    minLength?: number;
+    maxLength?: number;
+    min?: number;
+    max?: number;
+}
+
+function validate(validatableInput: Validatable) {
+    let isValid = true;
+
+    const stringValue = validatableInput.value?.toString() || "";
+
+    if (validatableInput.required) {
+        isValid = isValid && stringValue.trim().length !== 0;
+    }
+
+    if (validatableInput.minLength != null && typeof validatableInput.value === 'string') {
+        isValid = isValid && stringValue.length > validatableInput.minLength
+    }
+
+    if (validatableInput.maxLength != null && typeof validatableInput.value === 'string') {
+        isValid = isValid && stringValue.length > validatableInput.maxLength
+    }
+
+    if (validatableInput.min != null && typeof validatableInput.value === "number") {
+        isValid = isValid && validatableInput.value >= validatableInput.min
+    }
+
+    if (validatableInput.max != null && typeof validatableInput.value === "number") {
+        isValid = isValid && validatableInput.value <= validatableInput.max
+    }
+
+    return isValid;
+}
+
 function autoBind(_target: any, _methodName: string, descriptor: PropertyDescriptor) {
     const originalMethod = descriptor.value;
 
@@ -42,12 +79,30 @@ class ProjectInput {
         const description = this.descriptionInputElement.value;
         const people = this.peopleInputElement.value;
 
-        if(title.trim().length === 0 || description.trim().length === 0 || people.trim().length === 0) {
+        const titleValidation: Validatable = {
+            value: title,
+            required: true,
+        }
+
+        const descriptionValidation: Validatable = {
+            value: description,
+            required: true,
+            minLength: 5,
+        }
+
+        const peopleValidation: Validatable = {
+            value: +people,
+            required: true,
+            min: 1,
+            max: 5,
+        }
+
+        if (!validate(titleValidation) || !validate(descriptionValidation) || !validate(peopleValidation))  {
             alert("Invalid input, please try again")
-            return 
-        } 
-            
-        
+            return
+        }
+
+
         return [title, description, +people];
     }
 
@@ -62,7 +117,7 @@ class ProjectInput {
         event.preventDefault();
         const userInput = this.gatherUserInput();
 
-        if(Array.isArray(userInput)) {
+        if (Array.isArray(userInput)) {
             const [title, description, people] = userInput;
 
             console.log({
