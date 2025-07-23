@@ -3,6 +3,7 @@
 	"version": "1.0.0",
 	"description": "Understanding TypeScript Course Setup",
 	"main": "app.js",
+	"type": "module",
 	"scripts": {
 		"test": "echo \"Error: no test specified\" && exit 1",
 		"start": "lite-server",
@@ -15,6 +16,7 @@
 	"author": "Maximilian Schwarzmüller",
 	"license": "ISC",
 	"devDependencies": {
-		"lite-server": "^2.5.4"
+		"lite-server": "^2.5.4",
+		"typescript": "^5.8.3"
 	}
 }
