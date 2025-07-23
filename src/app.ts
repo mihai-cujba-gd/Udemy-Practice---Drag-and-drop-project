@@ -199,7 +199,10 @@ class ProjectItem
 	}
 
 	@autoBind
-	dragStartHandler(event: DragEvent): void {}
+	dragStartHandler(event: DragEvent): void {
+		event.dataTransfer!.setData("text/plain", this.project.id);
+		event.dataTransfer!.effectAllowed = "move";
+	}
 
 	@autoBind
 	dragEndHandler(event: DragEvent): void {}
@@ -233,8 +236,11 @@ class ProjectList
 
 	@autoBind
 	dragOverHandler(event: DragEvent): void {
-		const listEl = this.element.querySelector("ul");
-		listEl?.classList.add("droppable");
+		if (event.dataTransfer?.types[0] === "text/plain") {
+			event.preventDefault();
+			const listEl = this.element.querySelector("ul");
+			listEl?.classList.add("droppable");
+		}
 	}
 
 	@autoBind
