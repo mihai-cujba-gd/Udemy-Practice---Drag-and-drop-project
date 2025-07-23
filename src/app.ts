@@ -13,14 +13,23 @@ class Project {
     }
 }
 
-type Listener = (projects: Project[]) => void;
+type Listener<T> = (items: T[]) => void;
 
-class ProjectState {
-    private readonly listeners: Listener[] = [];
+class State<T> {
+    protected readonly listeners: Listener<T>[] = [];
+
+    addListener(listenerFn: Listener<T>) {
+        this.listeners.push(listenerFn);
+    }
+}
+
+class ProjectState extends State<Project> {
     private readonly projects: Project[] = [];
     private static instance: ProjectState;
 
-    private constructor() { }
+    private constructor() {
+        super()
+     }
 
     static getInstance() {
         if (this.instance) {
@@ -32,9 +41,7 @@ class ProjectState {
         return this.instance;
     }
 
-    addListener(listenerFn: Listener) {
-        this.listeners.push(listenerFn);
-    }
+
 
     addProject(title: string, description: string, people: number) {
         const newProject = new Project(
