@@ -4,10 +4,10 @@ enum ProjectStatus {
 }
 class Project {
     constructor(
-        public id: string, 
-        public title: string, 
-        public description: string, 
-        public people: number, 
+        public id: string,
+        public title: string,
+        public description: string,
+        public people: number,
         public status: ProjectStatus) {
 
     }
@@ -124,7 +124,14 @@ class ProjectList {
         this.element.id = `${this.type}-projects`
 
         projectState.addListener((projects) => {
-            this.assignedProjects = projects;
+            const relevantProjects = projects.filter(project => {
+                if (this.type === "active") {
+                    return project.status === ProjectStatus.Active
+                }
+
+                return project.status === ProjectStatus.Finished
+            })
+            this.assignedProjects = relevantProjects;
             this.renderProjects()
         })
 
@@ -135,7 +142,9 @@ class ProjectList {
     private renderProjects() {
         const listId = `${this.type}-projects-list`;
         const listEl = document.getElementById(listId)! as HTMLUListElement;
-
+        
+        listEl.innerHTML = "";
+        
         for (const project of this.assignedProjects) {
             const listItem = document.createElement("li");
             listItem.textContent = project.title;
